@@ -24,12 +24,12 @@ export default function App() {
 
   const handleMint = async () => {
     if (!currentAccount) {
-      alert('Connect your wallet first.');
+      alert('CONNECT YOUR WALLET FIRST.');
       return;
     }
 
     if (!packageId.trim() || !mintForm.customerId.trim() || !mintForm.imageUrl.trim()) {
-      alert('Please fill all fields before minting.');
+      alert('ALL FIELDS ARE REQUIRED.');
       return;
     }
 
@@ -45,11 +45,11 @@ export default function App() {
       });
 
       await signAndExecute({ transaction: tx });
-      alert('NFT Minted Successfully!');
+      alert('NFT MINTED SUCCESSFULLY!');
       setMintForm({ customerId: '', imageUrl: '' });
     } catch (err) {
       console.error('Minting failed:', err);
-      alert(`Minting failed: ${err.message}`);
+      alert(`MINTING FAILED: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -57,46 +57,49 @@ export default function App() {
 
   return (
     <div className="container">
-      <h1>SUI NFT Minter</h1>
+      <h1>SUI NFT MINTER</h1>
 
       <div className="card">
-        <ConnectButton />
-
-        {currentAccount && (
-          <p className="wallet-address">Connected Wallet: <strong>{currentAccount.address}</strong></p>
-        )}
+        <div>
+          <ConnectButton />
+          {currentAccount && (
+            <p className="wallet-address">
+              CONNECTED WALLET: <strong>{currentAccount.address}</strong>
+            </p>
+          )}
+        </div>
 
         <div className="input-group">
-          <label>Move Package ID</label>
+          <label>MOVE PACKAGE ID</label>
           <input
             type="text"
             value={packageId}
             onChange={(e) => setPackageId(e.target.value)}
-            placeholder="Enter Move Package ID"
+            placeholder="ENTER MOVE PACKAGE ID"
             disabled={!currentAccount}
           />
         </div>
 
         <div className="input-group">
-          <label>Recipient Wallet Address</label>
+          <label>RECIPIENT WALLET ADDRESS</label>
           <input
             type="text"
             name="customerId"
             value={mintForm.customerId}
             onChange={handleInputChange}
-            placeholder="Enter Wallet Address"
+            placeholder="ENTER WALLET ADDRESS"
             disabled={!currentAccount}
           />
         </div>
 
         <div className="input-group">
-          <label>Image URL for NFT</label>
+          <label>IMAGE URL FOR NFT</label>
           <input
             type="text"
             name="imageUrl"
             value={mintForm.imageUrl}
             onChange={handleInputChange}
-            placeholder="Enter Image URL"
+            placeholder="ENTER IMAGE URL"
             disabled={!currentAccount}
           />
           {mintForm.imageUrl && (
@@ -116,7 +119,7 @@ export default function App() {
             !mintForm.imageUrl.trim()
           }
         >
-          {loading ? 'Minting...' : 'Mint NFT'}
+          {loading ? 'MINTING...' : 'MINT NFT'}
         </button>
       </div>
     </div>

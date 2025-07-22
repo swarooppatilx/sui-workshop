@@ -1,118 +1,25 @@
-/* index.css */
-
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-:root {
-  /* Color Palette - Blueish Neo-Brutalism */
-  --primary-color: #007bff; /* Vibrant Blue for main actions */
-  --primary-hover: #0056b3;
-  --primary-active: #003f80;
-  --primary-hover-shadow: #002d66;
-
-  --accent-color: #00ffff; /* Bright Cyan for highlights/focus */
-
-  --connect-button-color: #33ccff; /* Lighter blue for connect button */
-  --connect-button-hover: #00ace6;
-  --connect-button-active: #008cd9;
-  --connect-button-hover-shadow: #006bb3;
-
-  --background-color: #1a2a3a; /* Deep, dark blue-gray background */
-  --card-background: #2a3d50; /* Slightly lighter blue-gray for cards */
-  --input-background: #1e3040; /* Even darker blue-gray for inputs */
-
-  --text-color: #e0f2f7; /* Light blueish-white for main text */
-  --secondary-text-color: #a0bed0; /* Muted blue-gray for secondary text/placeholders */
-  --button-text-color: #0a1a2a; /* Very dark blue for button text */
-
-  --border-color: #e0f2f7; /* Light border for strong contrast */
-  --dark-shadow: #000000; /* Deep black for prominent shadows */
-
-  --disabled-background: #405a70;
-  --disabled-text: #809bb0;
-  --disabled-border: #607a90;
-  --disabled-shadow: #203a4d;
+body {
+  margin: 0;
+  padding: 0;
+  background: #eeeeee;
+  color: #000;
+  font-family: 'Inter', sans-serif;
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Press Start 2P', cursive;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+html, body, #root {
+  height: 100%;
 }
 
-/* Basic reset for focus states */
-:focus {
-  outline: 3px dashed var(--accent-color); /* Use accent color for focus outline */
-  outline-offset: 3px;
+a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 2px solid black;
 }
 
-/* Remove default button styles */
-button {
-  border: none;
-  cursor: pointer;
-  appearance: none;
-}
-
-/* Styling for the ConnectButton from Dapp Kit */
-.wallet-connect-button > button {
-  width: 100%;
-  padding: 18px 25px;
-  background-color: var(--connect-button-color);
-  color: var(--button-text-color);
-  border: 3px solid var(--border-color);
-  box-shadow: 7px 7px 0px var(--dark-shadow);
-  font-size: 1.1em;
-  font-weight: bold;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.1s ease-in-out;
-  font-family: 'Press Start 2P', cursive;
-  margin-top: 10px;
-}
-
-.wallet-connect-button > button:hover {
-  background-color: var(--connect-button-hover);
-  box-shadow: 7px 7px 0px var(--connect-button-hover-shadow);
-  transform: translate(-2px, -2px);
-}
-
-.wallet-connect-button > button:active {
-  background-color: var(--connect-button-active);
-  box-shadow: 3px 3px 0px var(--dark-shadow);
-  transform: translate(4px, 4px);
-}
-
-.wallet-connect-button > button:disabled {
-  background-color: var(--disabled-background);
-  color: var(--disabled-text);
-  border-color: var(--disabled-border);
-  box-shadow: 3px 3px 0px var(--disabled-shadow);
-  cursor: not-allowed;
-}
-
-/* Adjustments for the Wallet Status display if it's rendered by Dapp Kit */
-.wallet-status-label,
-.wallet-status-address {
-  font-family: 'Press Start 2P', cursive;
-  color: var(--text-color);
-}
-
-.wallet-status-address {
-  word-break: break-all;
-}
-
-.mysten_dapp-kit__connect-button {
-  margin-bottom: 25px;
+a:hover {
+  background: yellow;
 }
