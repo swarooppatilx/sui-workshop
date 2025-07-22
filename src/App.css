@@ -278,3 +278,39 @@ button:disabled {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+.nft-gallery {
+  margin-top: 2rem;
+}
+
+.nft-gallery h2 {
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.nft-card {
+  border: 2px solid var(--primary);
+  background: var(--secondary);
+  padding: 0.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.nft-card img {
+  width: 100%;
+  height: auto;
+  border: 2px solid var(--primary);
+}
+
+.nft-card p {
+  margin: 0.3rem 0;
+  font-size: 0.75rem;
+  word-break: break-word;
+}

@@ -3,22 +3,22 @@ import { Transaction } from '@mysten/sui/transactions';
 import {
   useSignAndExecuteTransaction,
   ConnectButton,
-  useCurrentAccount
+  useCurrentAccount,
+  useSuiClient
 } from '@mysten/dapp-kit';
 import './App.css';
 
 export default function App() {
   const currentAccount = useCurrentAccount();
+  const suiClient = useSuiClient();
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();
 
   const [packageId, setPackageId] = useState('');
   const [loading, setLoading] = useState(false);
-  const [mintForm, setMintForm] = useState({
-    customerId: '',
-    imageUrl: ''
-  });
+  const [mintForm, setMintForm] = useState({ customerId: '', imageUrl: '' });
   const [notification, setNotification] = useState(null);
   const [errors, setErrors] = useState({});
+  const [myNFTs, setMyNFTs] = useState([]);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -38,7 +38,6 @@ export default function App() {
 
   const handleInputChange = (e) => {
     setMintForm({ ...mintForm, [e.target.name]: e.target.value });
-    // Clear error when user starts typing
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: '' });
     }
@@ -62,6 +61,7 @@ export default function App() {
       showNotification('NFT minted successfully!');
       setMintForm({ customerId: '', imageUrl: '' });
       setPackageId('');
+      loadMyNFTs();
     } catch (err) {
       console.error('Minting failed:', err);
       showNotification(`Minting failed: ${err.message}`, 'error');
@@ -69,6 +69,46 @@ export default function App() {
       setLoading(false);
     }
   };
+
+  const loadMyNFTs = async () => {
+    if (!currentAccount) {
+      showNotification('Connect your wallet first', 'error');
+      return;
+    }
+
+    if (!packageId.trim()) {
+      showNotification('Enter a valid package ID before loading NFTs.', 'error');
+      return;
+    }
+
+    try {
+      const objects = await suiClient.getOwnedObjects({
+        owner: currentAccount.address,
+        filter: {
+          StructType: `${packageId}::loyalty_card::Loyalty`
+        },
+        options: { showContent: true }
+      });
+
+      const nfts = objects.data.map(obj => {
+        const content = obj.data?.content?.fields;
+        return {
+          id: obj.data?.objectId,
+          customerId: content?.customer_id,
+          imageUrl: content?.image_url
+        };
+      });
+
+      setMyNFTs(nfts);
+      if (nfts.length === 0) {
+        showNotification('No NFTs found.', 'info');
+      }
+    } catch (err) {
+      console.error('Failed to load NFTs:', err);
+      showNotification('Failed to load NFTs', 'error');
+    }
+  };
+
 
   return (
     <div className="container">
@@ -145,21 +185,35 @@ export default function App() {
           )}
         </div>
 
-        <button
-          onClick={handleMint}
-          disabled={loading}
-          className={loading ? 'loading' : ''}
-        >
+        <button onClick={handleMint} disabled={loading} className={loading ? 'loading' : ''}>
           {loading ? (
             <>
-              <span className="spinner"></span>
-              MINTING...
+              <span className="spinner"></span> MINTING...
             </>
           ) : (
             'MINT NFT'
           )}
         </button>
+
+        <button onClick={loadMyNFTs} disabled={!currentAccount}>
+          LOAD MY NFTs
+        </button>
       </div>
+
+      {myNFTs.length > 0 && (
+        <div className="nft-gallery">
+          <h2>My NFTs</h2>
+          <div className="nft-grid">
+            {myNFTs.map(nft => (
+              <div key={nft.id} className="nft-card">
+                <img src={nft.imageUrl} alt={`NFT ${nft.id}`} />
+                <p>ID: {nft.id.slice(0, 6)}...{nft.id.slice(-4)}</p>
+                <p>Owner: {nft.customerId.slice(0, 6)}...{nft.customerId.slice(-4)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
