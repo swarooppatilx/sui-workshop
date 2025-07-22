@@ -2,6 +2,10 @@
 
 This is a simple NFT Minter built on the SUI Testnet. It was developed as part of a hands-on workshop conducted by the IOIT ACM Student Chapter to help participants learn about SUI blockchain, NFT minting, and integrating wallets with a React frontend.
 
+## Screenshot
+
+![SUI NFT Minter Screenshot](./public/screenshot.png)
+
 ## Features
 
 - Connect SUI wallet using Mysten Labs DappKit
@@ -22,7 +26,7 @@ This is a simple NFT Minter built on the SUI Testnet. It was developed as part o
 1. Clone the repository:
    ```bash
    git clone https://github.com/swarooppatilx/sui-workshop.git
-   cd sui-nft-minter
+   cd sui-workshop
    ```
 
 2. Install dependencies:
@@ -65,3 +69,4 @@ To preview the production build:
 ```bash
 npm run preview
 ```
+
