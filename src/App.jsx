@@ -19,6 +19,7 @@ export default function App() {
   const [notification, setNotification] = useState(null);
   const [errors, setErrors] = useState({});
   const [myNFTs, setMyNFTs] = useState([]);
+  const [gasEstimate, setGasEstimate] = useState(null);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -61,12 +62,43 @@ export default function App() {
       showNotification('NFT minted successfully!');
       setMintForm({ customerId: '', imageUrl: '' });
       setPackageId('');
+      setGasEstimate(null);
       loadMyNFTs();
     } catch (err) {
       console.error('Minting failed:', err);
       showNotification(`Minting failed: ${err.message}`, 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const estimateGas = async () => {
+    if (!validateForm()) {
+      showNotification('Fill all fields before estimating gas', 'error');
+      return;
+    }
+
+    try {
+      const tx = new Transaction();
+      tx.moveCall({
+        target: `${packageId}::loyalty_card::mint_loyalty`,
+        arguments: [
+          tx.pure.address(mintForm.customerId),
+          tx.pure.string(mintForm.imageUrl)
+        ]
+      });
+
+      const simulation = await suiClient.devInspectTransactionBlock({
+        sender: currentAccount.address,
+        transactionBlock: tx
+      });
+
+      const gasUsed = simulation.effects.gasUsed;
+      setGasEstimate(gasUsed);
+      showNotification('Gas estimated successfully!', 'info');
+    } catch (err) {
+      console.error('Gas estimation failed:', err);
+      showNotification('Failed to estimate gas', 'error');
     }
   };
 
@@ -84,9 +116,7 @@ export default function App() {
     try {
       const objects = await suiClient.getOwnedObjects({
         owner: currentAccount.address,
-        filter: {
-          StructType: `${packageId}::loyalty_card::Loyalty`
-        },
+        filter: { StructType: `${packageId}::loyalty_card::Loyalty` },
         options: { showContent: true }
       });
 
@@ -133,8 +163,18 @@ export default function App() {
           {currentAccount && (
             <p className="wallet-address">
               CONNECTED: <span>{currentAccount.address.slice(0, 6)}...{currentAccount.address.slice(-4)}</span>
+              {' '}
+              <a
+                href={`https://testnet.suivision.xyz/account/${currentAccount.address}?tab=Assets`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="explorer-link"
+              >
+                [Explorer]
+              </a>
             </p>
           )}
+
           {errors.wallet && <span className="error-message">{errors.wallet}</span>}
         </div>
 
@@ -194,6 +234,18 @@ export default function App() {
             'MINT NFT'
           )}
         </button>
+
+        <button onClick={estimateGas} disabled={!currentAccount}>
+          ESTIMATE GAS
+        </button>
+
+        {gasEstimate && (
+          <div className="gas-estimate">
+            <p>Gas Computation: {gasEstimate.computationCost}</p>
+            <p>Storage Cost: {gasEstimate.storageCost}</p>
+            <p>Storage Rebate: {gasEstimate.storageRebate}</p>
+          </div>
+        )}
 
         <button onClick={loadMyNFTs} disabled={!currentAccount}>
           LOAD MY NFTs

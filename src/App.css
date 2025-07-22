@@ -314,3 +314,21 @@ button:disabled {
   font-size: 0.75rem;
   word-break: break-word;
 }
+
+.gas-estimate {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 2px dashed var(--primary);
+  background: #f9f9f9;
+}
+
+.explorer-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.explorer-link:hover {
+  text-decoration: underline;
+}
