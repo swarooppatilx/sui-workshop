@@ -20,6 +20,7 @@ export default function App() {
   const [errors, setErrors] = useState({});
   const [myNFTs, setMyNFTs] = useState([]);
   const [gasEstimate, setGasEstimate] = useState(null);
+  const [activeTab, setActiveTab] = useState('mint');
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -61,7 +62,6 @@ export default function App() {
       await signAndExecute({ transaction: tx });
       showNotification('NFT minted successfully!');
       setMintForm({ customerId: '', imageUrl: '' });
-      setPackageId('');
       setGasEstimate(null);
       loadMyNFTs();
     } catch (err) {
@@ -139,7 +139,6 @@ export default function App() {
     }
   };
 
-
   return (
     <div className="container">
       <div className="header">
@@ -154,7 +153,23 @@ export default function App() {
           </button>
         </div>
       )}
-
+      <div className="tabs">
+        <button
+          className={`tab ${activeTab === 'mint' ? 'active' : ''}`}
+          onClick={() => setActiveTab('mint')}
+        >
+          Mint NFT
+        </button>
+        <button
+          className={`tab ${activeTab === 'myNFTs' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveTab('myNFTs');
+            loadMyNFTs();
+          }}
+        >
+          My NFTs
+        </button>
+      </div>
       <div className="card">
         <div className="wallet-section">
           <div className="connect-btn-wrapper">
@@ -178,94 +193,110 @@ export default function App() {
           {errors.wallet && <span className="error-message">{errors.wallet}</span>}
         </div>
 
-        <div className="input-group">
-          <label>PACKAGE ID</label>
-          <input
-            type="text"
-            value={packageId}
-            onChange={(e) => setPackageId(e.target.value)}
-            placeholder="0x..."
-            disabled={!currentAccount}
-            className={errors.packageId ? 'error' : ''}
-          />
-          {errors.packageId && <span className="error-message">{errors.packageId}</span>}
-        </div>
-
-        <div className="input-group">
-          <label>RECIPIENT ADDRESS</label>
-          <input
-            type="text"
-            name="customerId"
-            value={mintForm.customerId}
-            onChange={handleInputChange}
-            placeholder="0x..."
-            disabled={!currentAccount}
-            className={errors.customerId ? 'error' : ''}
-          />
-          {errors.customerId && <span className="error-message">{errors.customerId}</span>}
-        </div>
-
-        <div className="input-group">
-          <label>NFT IMAGE URL</label>
-          <input
-            type="text"
-            name="imageUrl"
-            value={mintForm.imageUrl}
-            onChange={handleInputChange}
-            placeholder="https://..."
-            disabled={!currentAccount}
-            className={errors.imageUrl ? 'error' : ''}
-          />
-          {errors.imageUrl && <span className="error-message">{errors.imageUrl}</span>}
-          {mintForm.imageUrl && (
-            <div className="image-preview">
-              <img src={mintForm.imageUrl} alt="NFT Preview" />
-              <div className="image-overlay">PREVIEW</div>
+        {activeTab === 'mint' && (
+          <>
+            <div className="input-group">
+              <label>PACKAGE ID</label>
+              <input
+                type="text"
+                value={packageId}
+                onChange={(e) => setPackageId(e.target.value)}
+                placeholder="0x..."
+                disabled={!currentAccount}
+                className={errors.packageId ? 'error' : ''}
+              />
+              {errors.packageId && <span className="error-message">{errors.packageId}</span>}
             </div>
-          )}
-        </div>
 
-        <button onClick={handleMint} disabled={loading} className={loading ? 'loading' : ''}>
-          {loading ? (
-            <>
-              <span className="spinner"></span> MINTING...
-            </>
-          ) : (
-            'MINT NFT'
-          )}
-        </button>
+            <div className="input-group">
+              <label>RECIPIENT ADDRESS</label>
+              <input
+                type="text"
+                name="customerId"
+                value={mintForm.customerId}
+                onChange={handleInputChange}
+                placeholder="0x..."
+                disabled={!currentAccount}
+                className={errors.customerId ? 'error' : ''}
+              />
+              {errors.customerId && <span className="error-message">{errors.customerId}</span>}
+            </div>
 
-        <button onClick={estimateGas} disabled={!currentAccount}>
-          ESTIMATE GAS
-        </button>
+            <div className="input-group">
+              <label>NFT IMAGE URL</label>
+              <input
+                type="text"
+                name="imageUrl"
+                value={mintForm.imageUrl}
+                onChange={handleInputChange}
+                placeholder="https://..."
+                disabled={!currentAccount}
+                className={errors.imageUrl ? 'error' : ''}
+              />
+              {errors.imageUrl && <span className="error-message">{errors.imageUrl}</span>}
+              {mintForm.imageUrl && (
+                <div className="image-preview">
+                  <img src={mintForm.imageUrl} alt="NFT Preview" />
+                  <div className="image-overlay">PREVIEW</div>
+                </div>
+              )}
+            </div>
 
-        {gasEstimate && (
-          <div className="gas-estimate">
-            <p>Gas Computation: {gasEstimate.computationCost}</p>
-            <p>Storage Cost: {gasEstimate.storageCost}</p>
-            <p>Storage Rebate: {gasEstimate.storageRebate}</p>
-          </div>
+            <div className="button-group">
+              <button onClick={handleMint} disabled={loading} className={loading ? 'loading' : ''}>
+                {loading ? (
+                  <>
+                    <span className="spinner"></span> MINTING...
+                  </>
+                ) : (
+                  'MINT NFT'
+                )}
+              </button>
+
+              <button onClick={estimateGas} disabled={!currentAccount}>
+                ESTIMATE GAS
+              </button>
+            </div>
+
+            {gasEstimate && (
+              <div className="gas-estimate">
+                <p>Gas Computation: {gasEstimate.computationCost}</p>
+                <p>Storage Cost: {gasEstimate.storageCost}</p>
+                <p>Storage Rebate: {gasEstimate.storageRebate}</p>
+              </div>
+            )}
+          </>
         )}
 
-        <button onClick={loadMyNFTs} disabled={!currentAccount}>
-          LOAD MY NFTs
-        </button>
-      </div>
-
-      {myNFTs.length > 0 && (
-        <div className="nft-gallery">
-          <h2>My NFTs</h2>
-          <div className="nft-grid">
-            {myNFTs.map(nft => (
-              <div key={nft.id} className="nft-card">
-                <img src={nft.imageUrl} alt={`NFT ${nft.id}`} />
-                <p>ID: {nft.id.slice(0, 6)}...{nft.id.slice(-4)}</p>
-                <p>Owner: {nft.customerId.slice(0, 6)}...{nft.customerId.slice(-4)}</p>
+        {activeTab === 'myNFTs' && (
+          <div className="nft-gallery">
+            {myNFTs.length > 0 ? (
+              <div className="nft-grid">
+                {myNFTs.map(nft => (
+                  <a
+                    key={nft.id}
+                    href={`https://testnet.suivision.xyz/object/${nft.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="nft-card-link"
+                  >
+                    <div className="nft-card">
+                      <img src={nft.imageUrl} alt={`NFT ${nft.id}`} onError={(e) => e.target.src = 'https://via.placeholder.com/150'} />
+                      <p>ID: {nft.id.slice(0, 6)}...{nft.id.slice(-4)}</p>
+                      <p>Owner: {nft.customerId.slice(0, 6)}...{nft.customerId.slice(-4)}</p>
+                    </div>
+                  </a>
+                ))}
               </div>
-            ))}
+            ) : (
+              <p className="no-nfts">No NFTs found. Mint some first!</p>
+            )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
+      <footer className="footer">
+        <a href="https://github.com/swarooppatilx" target="_blank">Made with ♥ by Swaroop</a>
+      </footer>
     </div>
   );
 }
